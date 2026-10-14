@@ -1,3 +1,10 @@
+/**
+ * Client-side module for the authenticated community home page.
+ *
+ * This script verifies the active session, loads the current user's role, and
+ * renders the report board so admins can manage the community list while users
+ * browse saved lost-and-found items.
+ */
 const accountLabel = document.getElementById("account-label");
 const roleBadge = document.getElementById("role-badge");
 const logoutButton = document.getElementById("logout-button");
@@ -16,10 +23,8 @@ const itemSubmit = document.getElementById("item-submit");
 const itemCancel = document.getElementById("item-cancel");
 const itemFormMessage = document.getElementById("item-form-message");
 const boardMessage = document.getElementById("board-message");
-const signedInEmail = sessionStorage.getItem("findit.currentUser");
-const isAdmin =
-  signedInEmail === "admin@findit.test" &&
-  sessionStorage.getItem("findit.currentRole") === "admin";
+let signedInEmail;
+let isAdmin = false;
 
 const defaultReports = [
   { id: "sample-1", type: "lost", title: "Blue water bottle", location: "Ayala Center Cebu", date: "2026-10-12" },
@@ -28,18 +33,6 @@ const defaultReports = [
 ];
 
 let reports = defaultReports;
-
-if (!signedInEmail) {
-  window.location.replace("index.html");
-} else {
-  accountLabel.textContent = signedInEmail;
-  roleBadge.textContent = isAdmin ? "Admin" : "User";
-  roleBadge.classList.toggle("admin", isAdmin);
-  adminTools.hidden = !isAdmin;
-  homeDescription.textContent = isAdmin
-    ? "Review community reports and manage the items on the board."
-    : "Search recent lost-and-found reports from your community.";
-}
 
 function loadReports() {
   const savedReports = localStorage.getItem("findit.reports");
@@ -122,10 +115,15 @@ function formatDate(dateString) {
     : new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(date);
 }
 
-logoutButton.addEventListener("click", () => {
-  sessionStorage.removeItem("findit.currentUser");
-  sessionStorage.removeItem("findit.currentRole");
-  window.location.href = "index.html";
+logoutButton.addEventListener("click", async () => {
+  try {
+    const response = await fetch("/api/logout", { method: "POST" });
+    if (!response.ok) throw new Error(`Sign-out failed (${response.status}).`);
+    window.location.href = "index.html";
+  } catch (error) {
+    console.error("Could not sign out.", error);
+    boardMessage.textContent = "Could not sign out. Please check your connection and try again.";
+  }
 });
 
 searchInput.addEventListener("input", renderReports);
@@ -192,11 +190,47 @@ itemForm.addEventListener("submit", (event) => {
   renderReports();
 });
 
-try {
-  reports = loadReports();
-} catch (error) {
-  console.error("Could not load community items.", error);
-  boardMessage.textContent = "Could not load saved items. Clear this site's local storage and reload.";
-  reports = defaultReports;
+async function initializeHome() {
+  try {
+    const response = await fetch("/api/session");
+    if (response.status === 401) {
+      window.location.replace("index.html");
+      return;
+    }
+    if (!response.ok) throw new Error(`Account check failed (${response.status}).`);
+
+    const result = await response.json();
+    if (
+      !result.user ||
+      typeof result.user.email !== "string" ||
+      !["admin", "user"].includes(result.user.role)
+    ) {
+      throw new Error("The server returned invalid account details.");
+    }
+
+    signedInEmail = result.user.email;
+    isAdmin = result.user.role === "admin";
+    accountLabel.textContent = signedInEmail;
+    roleBadge.textContent = isAdmin ? "Admin" : "User";
+    roleBadge.classList.toggle("admin", isAdmin);
+    adminTools.hidden = !isAdmin;
+    homeDescription.textContent = isAdmin
+      ? "Review community reports and manage the items on the board."
+      : "Search recent lost-and-found reports from your community.";
+  } catch (error) {
+    console.error("Could not verify the account.", error);
+    boardMessage.textContent = "Could not verify your account. Reload this page to try again.";
+    return;
+  }
+
+  try {
+    reports = loadReports();
+  } catch (error) {
+    console.error("Could not load community items.", error);
+    boardMessage.textContent = "Could not load saved items. Clear this site's local storage and reload.";
+    reports = defaultReports;
+  }
+  renderReports();
 }
-renderReports();
+
+initializeHome();

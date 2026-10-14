@@ -1,15 +1,51 @@
-// Grab the main login form and all related controls
+/**
+ * Client-side module for the login and registration screen.
+ *
+ * This script toggles between sign-in and account-creation states, validates
+ * password rules, and submits requests to the server so users can log in or
+ * create an account from the landing page.
+ */
+import { passwordProblem } from "./shared/password-policy.js";
+
 const form = document.getElementById("login-form");
+const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const passwordToggle = document.getElementById("toggle-password");
 const forgotPassword = document.getElementById("forgot-password");
+const passwordHelp = document.getElementById("password-help");
+const formOptions = document.querySelector(".form-options");
+const demoNote = document.getElementById("demo-note");
+const modeToggle = document.getElementById("auth-mode-toggle");
+const submitLabel = document.getElementById("submit-label");
+const heading = document.getElementById("login-title");
+const eyebrow = document.getElementById("form-eyebrow");
+const subtitle = document.getElementById("form-subtitle");
 const message = document.getElementById("form-message");
-const demoAccounts = [
-  { email: "admin@findit.test", password: "FindIT-admin-2026", role: "admin" },
-  { email: "user@findit.test", password: "FindIT-user-2026", role: "user" },
-];
+let isRegistering = false;
 
-// Toggle the password field between hidden and visible state
+// Switch one form between sign-in and account creation.
+modeToggle.addEventListener("click", () => {
+  isRegistering = !isRegistering;
+  form.reset();
+  message.textContent = "";
+  passwordInput.setCustomValidity("");
+  heading.textContent = isRegistering ? "Create your account" : "Log in to FIND IT";
+  eyebrow.textContent = isRegistering ? "CREATE AN ACCOUNT" : "WELCOME BACK";
+  subtitle.textContent = isRegistering
+    ? "Join your community and help bring lost things home."
+    : "Pick up where your search left off.";
+  submitLabel.textContent = isRegistering ? "Create account" : "Log in";
+  modeToggle.textContent = isRegistering
+    ? "Already have an account? Log in"
+    : "New to FIND IT? Create an account";
+  passwordInput.autocomplete = isRegistering ? "new-password" : "current-password";
+  passwordInput.maxLength = isRegistering ? 128 : 1024;
+  passwordHelp.hidden = !isRegistering;
+  formOptions.hidden = isRegistering;
+  forgotPassword.hidden = isRegistering;
+  demoNote.hidden = isRegistering;
+});
+
 passwordToggle.addEventListener("click", () => {
   const isVisible = passwordInput.type === "text";
   passwordInput.type = isVisible ? "password" : "text";
@@ -17,34 +53,46 @@ passwordToggle.addEventListener("click", () => {
   passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
 });
 
-// Show a placeholder note when the user clicks "Forgot password"
 forgotPassword.addEventListener("click", () => {
-  message.textContent = "Password recovery is not connected in this prototype.";
+  message.textContent = "Password recovery is not connected yet.";
 });
 
-// Clear any previous feedback when the user types again
 form.addEventListener("input", () => {
   message.textContent = "";
+  passwordInput.setCustomValidity(
+    isRegistering ? passwordProblem(passwordInput.value) || "" : "",
+  );
 });
 
-// Demo-only credential check; production sign-in requires a backend.
-form.addEventListener("submit", (event) => {
+// The server checks the password too and saves only a secure hash.
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  passwordInput.setCustomValidity(
+    isRegistering ? passwordProblem(passwordInput.value) || "" : "",
+  );
   if (!form.reportValidity()) return;
 
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const password = passwordInput.value;
-
-  const account = demoAccounts.find(
-    (demoAccount) => email === demoAccount.email && password === demoAccount.password,
-  );
-
-  if (!account) {
-    message.textContent = "Email or password is incorrect. Check the demo accounts below.";
-    return;
+  const submitButton = form.querySelector(".submit-button");
+  submitButton.disabled = true;
+  try {
+    const response = await fetch(isRegistering ? "/api/register" : "/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: emailInput.value.trim(),
+        password: passwordInput.value,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      message.textContent = result.error || "Could not sign in. Please try again.";
+      return;
+    }
+    window.location.href = "home.html";
+  } catch (error) {
+    console.error("Could not reach the account server.", error);
+    message.textContent = "Could not reach the server. Check your connection and try again.";
+  } finally {
+    submitButton.disabled = false;
   }
-
-  sessionStorage.setItem("findit.currentUser", email);
-  sessionStorage.setItem("findit.currentRole", account.role);
-  window.location.href = "home.html";
 });

@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="FIND IT Metro Cebu lost and found login page prototype."
+      content="Log in or create a FIND IT account to help bring lost things home."
     />
-    <title>Log in · FIND IT</title>
+    <title>Log in or sign up · FIND IT</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
+    <script type="module" src="app.js"></script>
   </head>
   <body>
     <div class="page-shell">
@@ -62,9 +62,9 @@
         <section class="form-panel" aria-labelledby="login-title">
           <div class="form-inner">
             <div class="form-heading">
-              <p class="eyebrow">WELCOME BACK</p>
+              <p class="eyebrow" id="form-eyebrow">WELCOME BACK</p>
               <h2 id="login-title">Log in to FIND IT</h2>
-              <p class="form-subtitle">Pick up where your search left off.</p>
+              <p class="form-subtitle" id="form-subtitle">Pick up where your search left off.</p>
             </div>
 
             <form id="login-form">
@@ -101,7 +101,9 @@
                   type="password"
                   placeholder="Enter your password"
                   autocomplete="current-password"
+                  maxlength="1024"
                   required
+                  aria-describedby="password-help"
                 />
                 <button
                   class="password-toggle"
@@ -116,6 +118,9 @@
                   </svg>
                 </button>
               </div>
+              <p class="password-help" id="password-help" hidden>
+                Use at least 8 characters, including an uppercase letter, a number, and a special character.
+              </p>
 
               <div class="form-options">
                 <label class="remember-option" for="remember">
@@ -126,7 +131,7 @@
               </div>
 
               <button class="submit-button" type="submit">
-                <span>Log in</span>
+                <span id="submit-label">Log in</span>
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M4 10h12m-5-5 5 5-5 5" />
                 </svg>
@@ -134,12 +139,16 @@
               <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
             </form>
 
-            <div class="prototype-note">
+            <button class="text-button auth-mode-toggle" id="auth-mode-toggle" type="button">
+              New to FIND IT? Create an account
+            </button>
+
+            <div class="prototype-note" id="demo-note">
               <span class="note-icon" aria-hidden="true">i</span>
               <div>
                 <p><strong>Admin demo</strong><br />admin@findit.test / FindIT-admin-2026</p>
                 <p><strong>User demo</strong><br />user@findit.test / FindIT-user-2026</p>
-                <p>This local demo is not secure for real accounts.</p>
+                <p>Account passwords are stored as secure hashes in a local database.</p>
               </div>
             </div>
 
@@ -150,7 +159,7 @@
 
       <footer class="page-footer">
         <span>FIND IT <span class="footer-dot">·</span> METRO CEBU LOST &amp; FOUND</span>
-        <span>UI prototype <span class="footer-dot">·</span> No account required</span>
+        <span>SQLite account demo <span class="footer-dot">·</span> Local use</span>
       </footer>
     </div>
   </body>
