@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="FIND IT Metro Cebu lost and found login page prototype."
+    />
+    <title>Log in · FIND IT</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="FIND IT home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 36 36" fill="none">
+              <path d="M18 3.5 32.5 18 18 32.5 3.5 18 18 3.5Z" />
+              <path d="M13 22.8v-9.6h10M13 18h7.2" />
+            </svg>
+          </span>
+          <span class="brand-name">FIND<span>IT</span></span>
+        </a>
+        <span class="location-label"><span></span> Metro Cebu lost &amp; found</span>
+      </header>
+
+      <main class="login-layout">
+        <section class="welcome-panel" aria-labelledby="welcome-title">
+          <div class="welcome-copy">
+            <p class="eyebrow"><span></span> A little closer to found</p>
+            <h1 id="welcome-title">Good things<br />find their way<br /><em>back.</em></h1>
+            <p class="welcome-description">
+              A community-wide place across Metro Cebu for lost things, found
+              things, and the people bringing them back together.
+            </p>
+          </div>
+
+          <div class="find-card" aria-hidden="true">
+            <div class="find-card-icon">
+              <svg viewBox="0 0 48 48" fill="none">
+                <path d="M24 5.5 42.5 24 24 42.5 5.5 24 24 5.5Z" />
+                <path d="m16.5 24 5 5 10-11" />
+              </svg>
+            </div>
+            <div>
+              <span class="find-card-label">THE RIGHT PLACE</span>
+              <p>Lost something? Start here.</p>
+            </div>
+            <span class="find-card-sparkle">✳</span>
+          </div>
+
+          <div class="welcome-bottom">
+            <span class="orbit orbit-one"></span>
+            <span class="orbit orbit-two"></span>
+            <span class="orbit orbit-three"></span>
+            <p>Made for Metro Cebu. <span>Connected by community.</span></p>
+          </div>
+        </section>
+
+        <section class="form-panel" aria-labelledby="login-title">
+          <div class="form-inner">
+            <div class="form-heading">
+              <p class="eyebrow">WELCOME BACK</p>
+              <h2 id="login-title">Log in to FIND IT</h2>
+              <p class="form-subtitle">Pick up where your search left off.</p>
+            </div>
+
+            <form id="login-form">
+              <label for="email">Email address</label>
+              <div class="input-wrap">
+                <svg class="input-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <rect x="2.5" y="4" width="15" height="12" rx="2" />
+                  <path d="m3.5 5 6.5 5.5L16.5 5" />
+                </svg>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="password-heading">
+                <label for="password">Password</label>
+                <button class="text-button" id="forgot-password" type="button">
+                  Forgot password?
+                </button>
+              </div>
+              <div class="input-wrap">
+                <svg class="input-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <rect x="3.5" y="8.5" width="13" height="9" rx="2" />
+                  <path d="M6.5 8.5V6a3.5 3.5 0 0 1 7 0v2.5M10 12v2" />
+                </svg>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  class="password-toggle"
+                  id="toggle-password"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                >
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M2 10s2.8-5 8-5 8 5 8 5-2.8 5-8 5-8-5-8-5Z" />
+                    <circle cx="10" cy="10" r="2.25" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="form-options">
+                <label class="remember-option" for="remember">
+                  <input id="remember" name="remember" type="checkbox" />
+                  <span class="custom-checkbox" aria-hidden="true"></span>
+                  <span>Remember me</span>
+                </label>
+              </div>
+
+              <button class="submit-button" type="submit">
+                <span>Log in</span>
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M4 10h12m-5-5 5 5-5 5" />
+                </svg>
+              </button>
+              <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+            </form>
+
+            <div class="prototype-note">
+              <span class="note-icon" aria-hidden="true">i</span>
+              <p>This is a visual prototype. Sign-in is not connected to an account.</p>
+            </div>
+
+            <p class="form-footer">A better way to bring lost things home <span>✳</span></p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <span>FIND IT <span class="footer-dot">·</span> METRO CEBU LOST &amp; FOUND</span>
+        <span>UI prototype <span class="footer-dot">·</span> No account required</span>
+      </footer>
+    </div>
+  </body>
+</html>

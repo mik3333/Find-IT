@@ -1,0 +1,742 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+:root {
+  color-scheme: light;
+  font-family: "DM Sans", "Segoe UI", sans-serif;
+  color: #192923;
+  background: #f4f5f0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --ink: #192923;
+  --muted: #818a82;
+  --green: #236c4a;
+  --green-dark: #1d5d40;
+  --line: #e6e9e3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 8% 5%, rgba(215, 228, 208, 0.4), transparent 30%),
+    #f4f5f0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+.page-shell {
+  width: min(1200px, 100%);
+  min-height: calc(100vh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 54px;
+  margin-bottom: 22px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 35px;
+  height: 35px;
+}
+
+.brand-mark svg {
+  width: 100%;
+  height: 100%;
+  stroke: var(--green);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.brand-name {
+  font-family: Manrope, "Segoe UI", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -1.1px;
+}
+
+.brand-name span {
+  color: var(--green);
+}
+
+.location-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #768077;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+}
+
+.location-label > span,
+.eyebrow > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6dab80;
+  box-shadow: 0 0 0 3px rgba(109, 171, 128, 0.15);
+}
+
+.login-layout {
+  flex: 1;
+  min-height: 650px;
+  display: grid;
+  grid-template-columns: 1.02fr 0.98fr;
+  overflow: hidden;
+  border: 1px solid rgba(31, 54, 42, 0.08);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(35, 54, 41, 0.09);
+}
+
+.welcome-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 650px;
+  overflow: hidden;
+  padding: 68px 64px 30px;
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 73% 83%, rgba(73, 139, 92, 0.32), transparent 38%),
+    radial-gradient(ellipse at 2% 2%, rgba(51, 111, 75, 0.27), transparent 42%),
+    #172a22;
+}
+
+.welcome-panel::before,
+.welcome-panel::after {
+  position: absolute;
+  z-index: 0;
+  width: 410px;
+  height: 410px;
+  border: 1px solid rgba(214, 240, 220, 0.08);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.welcome-panel::before {
+  right: -212px;
+  bottom: 4px;
+}
+
+.welcome-panel::after {
+  right: -157px;
+  bottom: 59px;
+}
+
+.welcome-copy,
+.find-card,
+.welcome-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #8dbb98;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+}
+
+.eyebrow > span {
+  width: 6px;
+  height: 6px;
+  box-shadow: none;
+}
+
+.welcome-copy h1 {
+  margin: 28px 0 21px;
+  font-family: Manrope, "Segoe UI", sans-serif;
+  font-size: clamp(46px, 5.2vw, 66px);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 1.07;
+}
+
+.welcome-copy h1 em {
+  color: #a8d4a4;
+  font-style: normal;
+}
+
+.welcome-description {
+  max-width: 345px;
+  margin: 0;
+  color: #bdc9c0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.find-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: fit-content;
+  min-width: 270px;
+  margin-top: auto;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.075);
+  backdrop-filter: blur(10px);
+}
+
+.find-card-icon {
+  width: 42px;
+  height: 42px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(164, 213, 169, 0.15);
+}
+
+.find-card-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: #a8d4a4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.find-card-label {
+  color: #99b4a0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.find-card p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.find-card-sparkle {
+  margin-left: 12px;
+  color: #a8d4a4;
+  font-size: 20px;
+}
+
+.welcome-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 31px;
+}
+
+.welcome-bottom p {
+  margin: 0;
+  color: #8f9f93;
+  font-size: 10px;
+}
+
+.welcome-bottom p span {
+  color: #c0c9c1;
+}
+
+.orbit {
+  position: absolute;
+  right: -79px;
+  bottom: -86px;
+  width: 200px;
+  height: 200px;
+  border: 1px solid rgba(214, 240, 220, 0.11);
+  border-radius: 50%;
+}
+
+.orbit-two {
+  right: -46px;
+  bottom: -53px;
+  width: 134px;
+  height: 134px;
+}
+
+.orbit-three {
+  right: -13px;
+  bottom: -20px;
+  width: 68px;
+  height: 68px;
+}
+
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 64px;
+  background: #fff;
+}
+
+.form-inner {
+  width: min(100%, 365px);
+}
+
+.form-heading .eyebrow {
+  color: #698572;
+}
+
+.form-heading h2 {
+  margin: 13px 0 8px;
+  font-family: Manrope, "Segoe UI", sans-serif;
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: -0.055em;
+}
+
+.form-subtitle {
+  margin: 0;
+  color: #858d87;
+  font-size: 13px;
+}
+
+#login-form {
+  margin-top: 36px;
+}
+
+#login-form > label,
+.password-heading label {
+  display: block;
+  color: #36443b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 49px;
+  margin-top: 9px;
+  border: 1px solid #e1e6e0;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.input-wrap:focus-within {
+  border-color: #6ca07e;
+  box-shadow: 0 0 0 3px rgba(93, 149, 110, 0.11);
+}
+
+.input-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-left: 14px;
+  stroke: #95a098;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.input-wrap input {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 12px;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font-size: 13px;
+}
+
+.input-wrap input::placeholder {
+  color: #aeb5b0;
+}
+
+.password-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 23px;
+}
+
+.text-button {
+  padding: 0;
+  border: 0;
+  color: var(--green);
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.text-button:hover {
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.password-toggle {
+  display: grid;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 100%;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  color: #929c94;
+  background: transparent;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--green);
+}
+
+.password-toggle svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 23px;
+}
+
+.remember-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #69746c;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.remember-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.custom-checkbox {
+  display: grid;
+  width: 15px;
+  height: 15px;
+  place-items: center;
+  border: 1px solid #ccd5cc;
+  border-radius: 4px;
+  background: #fff;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.custom-checkbox::after {
+  width: 7px;
+  height: 4px;
+  border-bottom: 1.5px solid #fff;
+  border-left: 1.5px solid #fff;
+  content: "";
+  opacity: 0;
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.remember-option input:checked + .custom-checkbox {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.remember-option input:checked + .custom-checkbox::after {
+  opacity: 1;
+}
+
+.remember-option input:focus-visible + .custom-checkbox,
+.password-toggle:focus-visible,
+.text-button:focus-visible,
+.submit-button:focus-visible,
+.brand:focus-visible {
+  outline: 3px solid rgba(67, 130, 86, 0.35);
+  outline-offset: 3px;
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 49px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--green);
+  box-shadow: 0 5px 12px rgba(35, 108, 74, 0.16);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.submit-button:hover {
+  background: var(--green-dark);
+  box-shadow: 0 7px 16px rgba(35, 108, 74, 0.22);
+  transform: translateY(-1px);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.form-message {
+  min-height: 0;
+  margin: 0;
+  color: #785f27;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.form-message:not(:empty) {
+  margin-top: 13px;
+  padding: 10px 12px;
+  border: 1px solid #f0e6cc;
+  border-radius: 7px;
+  background: #fcf8ee;
+}
+
+.prototype-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 25px;
+  padding: 13px 13px;
+  border: 1px solid #e8ede8;
+  border-radius: 8px;
+  background: #f8faf7;
+}
+
+.note-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  place-items: center;
+  border-radius: 50%;
+  color: #52775d;
+  background: #e2ece2;
+  font-family: Georgia, serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.prototype-note p {
+  margin: 0;
+  color: #758078;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.form-footer {
+  margin: 31px 0 0;
+  color: #a0a7a1;
+  text-align: center;
+  font-size: 10px;
+}
+
+.form-footer span {
+  padding-left: 3px;
+  color: #78a582;
+}
+
+.page-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 2px 0;
+  color: #929a92;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+}
+
+.page-footer > span:last-child {
+  font-weight: 400;
+  letter-spacing: 0.025em;
+}
+
+.footer-dot {
+  padding: 0 5px;
+  color: #a6b0a7;
+}
+
+@media (max-width: 900px) {
+  body {
+    padding: 18px;
+  }
+
+  .page-shell {
+    min-height: calc(100vh - 36px);
+  }
+
+  .login-layout {
+    min-height: 610px;
+  }
+
+  .welcome-panel {
+    min-height: 610px;
+    padding: 52px 38px 26px;
+  }
+
+  .form-panel {
+    padding: 46px 36px;
+  }
+
+  .welcome-copy h1 {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 680px) {
+  body {
+    padding: 13px;
+  }
+
+  .page-shell {
+    min-height: calc(100vh - 26px);
+  }
+
+  .topbar {
+    min-height: 46px;
+    margin-bottom: 13px;
+  }
+
+  .brand-mark {
+    width: 31px;
+    height: 31px;
+  }
+
+  .brand-name {
+    font-size: 17px;
+  }
+
+  .location-label {
+    font-size: 10px;
+  }
+
+  .login-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-radius: 15px;
+  }
+
+  .welcome-panel {
+    min-height: 270px;
+    padding: 30px 27px 23px;
+  }
+
+  .welcome-copy h1 {
+    margin: 17px 0 10px;
+    font-size: clamp(39px, 11vw, 51px);
+  }
+
+  .welcome-description {
+    max-width: 370px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .find-card {
+    display: none;
+  }
+
+  .welcome-bottom {
+    margin-top: 22px;
+  }
+
+  .form-panel {
+    padding: 37px 27px 32px;
+  }
+
+  .form-heading h2 {
+    font-size: 26px;
+  }
+
+  #login-form {
+    margin-top: 29px;
+  }
+
+  .page-footer {
+    gap: 12px;
+    padding-top: 14px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .location-label {
+    font-size: 9px;
+  }
+
+  .welcome-panel {
+    padding-right: 21px;
+    padding-left: 21px;
+  }
+
+  .form-panel {
+    padding-right: 21px;
+    padding-left: 21px;
+  }
+
+  .page-footer > span:last-child {
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
