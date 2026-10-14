@@ -1,3 +1,10 @@
+/**
+ * Client-side module for the login and registration screen.
+ *
+ * This script toggles between sign-in and account-creation states, validates
+ * password rules, and submits requests to the server so users can log in or
+ * create an account from the landing page.
+ */
 import { passwordProblem } from "./shared/password-policy.js";
 
 const form = document.getElementById("login-form");

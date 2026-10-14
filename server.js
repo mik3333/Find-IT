@@ -1,3 +1,10 @@
+/**
+ * Server entry point for the FIND IT demo application.
+ *
+ * This module starts the HTTP server, backs the account API with SQLite, keeps
+ * short-lived sign-in sessions in memory, and serves the static pages and client
+ * scripts used by the browser.
+ */
 import { createServer } from "node:http";
 import { randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";

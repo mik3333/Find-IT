@@ -1,3 +1,10 @@
+/**
+ * Client-side module for the authenticated community home page.
+ *
+ * This script verifies the active session, loads the current user's role, and
+ * renders the report board so admins can manage the community list while users
+ * browse saved lost-and-found items.
+ */
 const accountLabel = document.getElementById("account-label");
 const roleBadge = document.getElementById("role-badge");
 const logoutButton = document.getElementById("logout-button");

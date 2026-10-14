@@ -1,3 +1,9 @@
+/**
+ * Authentication module for local account registration and sign-in.
+ *
+ * It validates emails and passwords, provides sign-up/login checks, and exposes
+ * the helpers consumed by the server API for account creation and session login.
+ */
 import { findUserByEmail, insertUser } from "./database.js";
 import { hashPassword, verifyPassword } from "./passwords.js";
 import { passwordProblem } from "../shared/password-policy.js";

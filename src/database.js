@@ -1,3 +1,9 @@
+/**
+ * Data-access module for the local SQLite database.
+ *
+ * This file opens the project database, creates the user table, and exposes the
+ * read/write helpers used by the authentication layer.
+ */
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";

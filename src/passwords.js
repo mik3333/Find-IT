@@ -1,5 +1,12 @@
 import { passwordProblem } from "../shared/password-policy.js";
 
+/**
+ * Demo password utility module.
+ *
+ * This file performs the local password checks used by the app's in-memory demo
+ * authentication flow and validates credentials without a production hashing
+ * implementation.
+ */
 // Demo/local password handling only.
 
 /**

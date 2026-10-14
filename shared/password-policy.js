@@ -1,3 +1,9 @@
+/**
+ * Shared password policy module.
+ *
+ * The browser and server both import this file so they enforce the same rules for
+ * local account creation and login validation.
+ */
 // Keep the password rules in one place so the browser and server agree.
 export function passwordProblem(password) {
   const length = Array.from(password).length;
