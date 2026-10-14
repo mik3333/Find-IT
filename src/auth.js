@@ -5,7 +5,7 @@
  * the helpers consumed by the server API for account creation and session login.
  */
 import { findUserByEmail, insertUser } from "./database.js";
-import { hashPassword, verifyPassword } from "./passwords.js";
+import { decryptEmail, encryptEmail, hashPassword, verifyPassword } from "./passwords.js";
 import { passwordProblem } from "../shared/password-policy.js";
 
 /**
@@ -67,16 +67,21 @@ export async function registerUser(database, emailInput, password) {
     throw new AuthError(passwordIssue, 400);
   }
 
+  if (findUserByEmail(database, email)) {
+    throw new AuthError("An account with this email already exists.", 409);
+  }
+
+  const encryptedEmail = encryptEmail(email);
   const { salt, hash } = await hashPassword(password);
   const user = insertUser(database, {
-    email,
+    email: encryptedEmail,
     passwordSalt: salt,
     passwordHash: hash,
   });
   if (!user) {
     throw new AuthError("An account with this email already exists.", 409);
   }
-  return user;
+  return { ...user, email: decryptEmail(user.email) };
 }
 
 /**
@@ -94,5 +99,5 @@ export async function authenticateUser(database, emailInput, password) {
   if (!user || !(await verifyPassword(password, user.password_salt, user.password_hash))) {
     throw new AuthError("Email or password is incorrect.", 401);
   }
-  return { id: user.id, email: user.email, role: user.role };
+  return { id: user.id, email: decryptEmail(user.email), role: user.role };
 }

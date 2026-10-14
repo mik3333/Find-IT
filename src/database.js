@@ -8,6 +8,7 @@ import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
+import { encryptEmail } from "./passwords.js";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const databasePath = resolve(projectRoot, "data", "findit.sqlite");
@@ -31,8 +32,9 @@ export function openDatabase(path = databasePath) {
  * @param {DatabaseSync} database - The SQLite database instance.
  */
 function initializeDatabase(database) {
-  // Local demo database: the app keeps the account password in plain text for now.
-  // A salted hashing implementation is planned for a future version.
+  // The local demo stores encrypted values for user email and password data.
+  // This keeps the database contents harder to read while still allowing simple
+  // local validation and account lookups.
   database.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY,
@@ -53,9 +55,11 @@ function initializeDatabase(database) {
  * @returns {object | undefined} Matching user row or undefined when not found.
  */
 export function findUserByEmail(database, email) {
+  const normalizedEmail = typeof email === "string" ? email : "";
+  const encryptedEmail = /^[0-9a-f]+$/iu.test(normalizedEmail) ? normalizedEmail : encryptEmail(normalizedEmail);
   return database.prepare(
-    "SELECT id, email, password_salt, password_hash, role FROM users WHERE email = ?",
-  ).get(email);
+    "SELECT id, email, password_salt, password_hash, role FROM users WHERE email = ? OR email = ?",
+  ).get(normalizedEmail, encryptedEmail);
 }
 
 /**
