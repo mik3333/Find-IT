@@ -433,6 +433,13 @@ button {
   margin: 18px 0 23px;
 }
 
+.password-help {
+  margin: 9px 0 0;
+  color: #758078;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .remember-option {
   position: relative;
   display: inline-flex;
@@ -513,6 +520,11 @@ button {
   transform: translateY(-1px);
 }
 
+.submit-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .submit-button:active {
   transform: translateY(0);
 }
@@ -540,6 +552,12 @@ button {
   border: 1px solid #f0e6cc;
   border-radius: 7px;
   background: #fcf8ee;
+}
+
+.auth-mode-toggle {
+  display: block;
+  margin: 18px auto 0;
+  font-size: 12px;
 }
 
 .prototype-note {

@@ -1,33 +1,58 @@
-# FIND IT 
+# FIND IT
 
-A standalone, static prototype of FIND IT. It has no server or database.
+A small FIND IT community lost-and-found demo with SQLite-backed user accounts.
+
+## What's new - kean maquilan
+
+This version adds a working local authentication flow and a complete community board experience:
+
+- Secure sign-up and sign-in with email validation and password checks
+- SQLite-backed user accounts with a local demo auth flow
+- Modular code structure for easier maintenance and debugging
+- Admin and user roles with session-based access control
+- Demo accounts for quick local testing
+- Login and registration UI with password visibility toggle and account-mode switching
+- Community home page with search, report cards, item creation, and admin editing
+- Browser-side saved reports using localStorage for a lightweight demo workflow
+
+## Run locally
+
+Install Node.js 22.5 or later, then run these commands from this folder:
+
+```powershell
+npm start
+```
+
+Open <http://localhost:3000>. The first start creates `data/findit.sqlite` and
+adds the demo accounts below. Registration works from the "Create an account"
+link on the login page.
 
 ## Demo login
-
-Use either demo account to open its role-specific homepage:
 
 | Role | Email | Password |
 | --- | --- | --- |
 | Admin | `admin@findit.test` | `FindIT-admin-2026` |
 | User | `user@findit.test` | `FindIT-user-2026` |
 
-Admins can add and edit community reports. Users can search and view reports.
-Added and edited reports are stored in this browser's local storage. The demo
-credential check and role permissions run in browser JavaScript and are not
-secure or intended for real accounts; production access control requires a
-backend. The initial homepage report cards are sample content.
+New accounts need a valid email and a password with at least 8 characters, one
+uppercase letter, one number, and one special character. The local demo keeps
+user credentials in the SQLite database on this computer; production-grade
+salted password hashing is planned as a future addition.
 
-## Preview
+The main code is split by job: `server.js` serves the pages and account API,
+`src/database.js` creates and reads the SQLite database, `src/auth.js` handles
+sign-up and sign-in, `src/passwords.js` manages the current demo password
+checking flow, and `shared/password-policy.js` shares the password rules between
+the browser and server. `app.js` handles the login and registration form;
+`home.js` checks the server session before showing the community page.
 
-Open `index.html` in a browser, or start a local static server from this folder:
+Sign-in sessions are kept in server memory and end when the server restarts.
+This setup is for local use, not production hosting. A public service needs
+HTTPS, persistent sessions, and production access checks for admin actions.
+Community reports remain saved in each browser's local storage.
+
+## Test
 
 ```powershell
-python -m http.server 5500
+npm test
 ```
-
-Then visit <http://localhost:5500>.
-
-The password visibility control, remember-me checkbox, forgot-password
-explanation, login check, homepage search, admin item management, and logout are
-interactive. The page uses Google Fonts when available and falls back to system
-fonts.
