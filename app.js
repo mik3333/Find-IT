@@ -4,6 +4,10 @@ const passwordInput = document.getElementById("password");
 const passwordToggle = document.getElementById("toggle-password");
 const forgotPassword = document.getElementById("forgot-password");
 const message = document.getElementById("form-message");
+const demoAccounts = [
+  { email: "admin@findit.test", password: "FindIT-admin-2026", role: "admin" },
+  { email: "user@findit.test", password: "FindIT-user-2026", role: "user" },
+];
 
 // Toggle the password field between hidden and visible state
 passwordToggle.addEventListener("click", () => {
@@ -23,10 +27,24 @@ form.addEventListener("input", () => {
   message.textContent = "";
 });
 
-// Prevent form submission and show a prototype-only message instead of real login logic
+// Demo-only credential check; production sign-in requires a backend.
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   if (!form.reportValidity()) return;
 
-  message.textContent = "This is a visual prototype. No account was checked and no sign-in occurred.";
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = passwordInput.value;
+
+  const account = demoAccounts.find(
+    (demoAccount) => email === demoAccount.email && password === demoAccount.password,
+  );
+
+  if (!account) {
+    message.textContent = "Email or password is incorrect. Check the demo accounts below.";
+    return;
+  }
+
+  sessionStorage.setItem("findit.currentUser", email);
+  sessionStorage.setItem("findit.currentRole", account.role);
+  window.location.href = "home.html";
 });
