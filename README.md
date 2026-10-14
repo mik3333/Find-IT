@@ -1,6 +1,6 @@
-# FIND IT — Login UI Prototype
+# FIND IT 
 
-A standalone, static prototype of the FIND IT login page. It contains no server,
+A standalone, static prototype of the FIND IT. It contains no server,
 database, account system, or real sign-in.
 
 ## Preview
