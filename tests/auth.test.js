@@ -16,7 +16,7 @@ test("passwords need eight characters, an uppercase letter, a number, and a symb
 test("demo password helpers compare the stored value without hashing", async () => {
   const { salt, hash } = await hashPassword("Goodpass1!");
   assert.equal(salt, "");
-  assert.equal(hash, "Goodpass1!");
+  assert.notEqual(hash, "Goodpass1!");
   assert.equal(await verifyPassword("Goodpass1!", salt, hash), true);
   assert.equal(await verifyPassword("Wrongpass1!", salt, hash), false);
 });
@@ -28,6 +28,11 @@ test("registration stores unique normalized emails and login checks the password
   const user = await registerUser(database, " Person@Example.com ", "Goodpass1!");
   assert.equal(user.email, "person@example.com");
   assert.equal(user.role, "user");
+
+  const storedUser = database.prepare("SELECT email, password_hash FROM users WHERE id = ?").get(user.id);
+  assert.notEqual(storedUser.email, "person@example.com");
+  assert.notEqual(storedUser.password_hash, "Goodpass1!");
+
   const signedInUser = await authenticateUser(database, "PERSON@example.com", "Goodpass1!");
   assert.equal(signedInUser.id, user.id);
   assert.equal(signedInUser.email, user.email);
