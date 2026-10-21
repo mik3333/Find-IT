@@ -1,6 +1,6 @@
 # FIND IT
 
-A small FIND IT community lost-and-found demo with SQLite-backed user accounts.
+A small, community-wide FIND IT lost-and-found demo with SQLite-backed user accounts.
 
 ## What's new
 
@@ -16,6 +16,8 @@ This version adds a working local authentication flow, stronger local credential
 - Login and registration UI with password visibility toggle and account-mode switching
 - Community home page with search, report cards, item creation, and admin editing
 - Browser-side saved reports using localStorage for a lightweight demo workflow
+- Updated responsive UI with clearer focus states and lightweight hover/entry transitions
+- Supplied FIND IT logo used in the page headers and browser tab icon
 
 ## Run locally
 
