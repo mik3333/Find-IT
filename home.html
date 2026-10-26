@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="FIND IT Metro Cebu community lost and found board." />
+    <meta name="description" content="FIND IT community lost and found board." />
     <title>Community board · FIND IT</title>
+    <link rel="icon" type="image/png" href="/assets/find-it-logo.png" />
     <link rel="stylesheet" href="styles.css" />
     <script src="home.js" defer></script>
   </head>
@@ -12,13 +13,7 @@
     <div class="page-shell">
       <header class="topbar">
         <a class="brand" href="home.html" aria-label="FIND IT home">
-          <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 36 36" fill="none">
-              <path d="M18 3.5 32.5 18 18 32.5 3.5 18 18 3.5Z" />
-              <path d="M13 22.8v-9.6h10M13 18h7.2" />
-            </svg>
-          </span>
-          <span class="brand-name">FIND<span>IT</span></span>
+          <img class="brand-logo" src="/assets/find-it-logo.png" alt="FIND IT" />
         </a>
         <div class="account-actions">
           <span class="account-label" id="account-label"></span>
@@ -35,7 +30,7 @@
       <main class="home-main">
         <section class="home-intro" aria-labelledby="home-title">
           <div>
-            <p class="eyebrow"><span></span> METRO CEBU COMMUNITY BOARD</p>
+            <p class="eyebrow"><span></span> COMMUNITY BOARD</p>
             <h1 id="home-title">Welcome back.</h1>
             <p class="home-description" id="home-description">Search recent lost-and-found reports from your community.</p>
           </div>
@@ -69,7 +64,7 @@
             </label>
             <label>
               Location
-              <input id="item-location" name="location" type="text" maxlength="100" placeholder="e.g. Ayala Center Cebu" required />
+              <input id="item-location" name="location" type="text" maxlength="100" placeholder="e.g. Central library" required />
             </label>
             <div class="item-form-actions">
               <button class="admin-button" id="item-submit" type="submit">Add item</button>
@@ -95,7 +90,7 @@
       </main>
 
       <footer class="page-footer">
-        <span>FIND IT <span class="footer-dot">·</span> METRO CEBU LOST &amp; FOUND</span>
+        <span>FIND IT <span class="footer-dot">·</span> COMMUNITY LOST &amp; FOUND</span>
         <span>Community board <span class="footer-dot">·</span> Demo content</span>
       </footer>
     </div>

@@ -27,6 +27,7 @@ const staticFiles = new Map([
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/home.js", ["home.js", "text/javascript; charset=utf-8"]],
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
+  ["/assets/find-it-logo.png", ["assets/find-it-logo.png", "image/png"]],
   ["/shared/password-policy.js", ["shared/password-policy.js", "text/javascript; charset=utf-8"]],
 ]);
 

@@ -61,29 +61,13 @@ button {
   text-decoration: none;
 }
 
-.brand-mark {
-  width: 35px;
-  height: 35px;
-}
-
-.brand-mark svg {
-  width: 100%;
-  height: 100%;
-  stroke: var(--green);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.7;
-}
-
-.brand-name {
-  font-family: Manrope, "Segoe UI", sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -1.1px;
-}
-
-.brand-name span {
-  color: var(--green);
+.brand-logo {
+  display: block;
+  width: 116px;
+  height: 46px;
+  object-fit: cover;
+  object-position: center;
+  mix-blend-mode: multiply;
 }
 
 .location-label {
@@ -210,7 +194,6 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.075);
-  backdrop-filter: blur(10px);
 }
 
 .find-card-icon {
@@ -391,6 +374,7 @@ button {
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
+  transition: color 160ms ease;
 }
 
 .text-button:hover {
@@ -676,13 +660,9 @@ button {
     margin-bottom: 13px;
   }
 
-  .brand-mark {
-    width: 31px;
-    height: 31px;
-  }
-
-  .brand-name {
-    font-size: 17px;
+  .brand-logo {
+    width: 104px;
+    height: 42px;
   }
 
   .location-label {
@@ -733,6 +713,7 @@ button {
   }
 
   .page-footer {
+    flex-wrap: wrap;
     gap: 12px;
     padding-top: 14px;
     font-size: 8px;
@@ -764,6 +745,8 @@ button {
   *::before,
   *::after {
     scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
@@ -805,11 +788,13 @@ button {
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
 .logout-button:hover {
   border-color: #b9cbbd;
   color: var(--green-dark);
+  transform: translateY(-1px);
 }
 
 .logout-button svg {
@@ -864,6 +849,7 @@ button {
   border: 1px solid #e1e8df;
   border-radius: 10px;
   background: #f9fbf8;
+  animation: panel-enter 180ms ease-out;
 }
 
 .admin-tools[hidden] {
@@ -902,6 +888,7 @@ button {
   background: #fff;
   font: inherit;
   font-size: 12px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .item-form input:focus,
@@ -928,6 +915,13 @@ button {
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.admin-button:hover {
+  border-color: var(--green-dark);
+  background: var(--green-dark);
+  transform: translateY(-1px);
 }
 
 .cancel-button {
@@ -953,6 +947,7 @@ button {
   border: 1px solid #dce3dc;
   border-radius: 8px;
   background: #fff;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .home-search:focus-within {
@@ -1030,6 +1025,12 @@ button {
   border: 1px solid #e5e9e3;
   border-radius: 8px;
   background: #fff;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.report-card:hover {
+  border-color: #cbd8cd;
+  transform: translateY(-2px);
 }
 
 .report-card[hidden] {
@@ -1104,6 +1105,7 @@ button {
 .cancel-button:hover {
   border-color: #b9cbbd;
   color: var(--green-dark);
+  transform: translateY(-1px);
 }
 
 .empty-state {
@@ -1127,9 +1129,23 @@ button {
 }
 
 .logout-button:focus-visible,
-.home-search input:focus-visible {
+.home-search input:focus-visible,
+.admin-button:focus-visible,
+.cancel-button:focus-visible,
+.edit-button:focus-visible {
   outline: 3px solid rgba(67, 130, 86, 0.3);
   outline-offset: 3px;
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 800px) {

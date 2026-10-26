@@ -27,9 +27,9 @@ let signedInEmail;
 let isAdmin = false;
 
 const defaultReports = [
-  { id: "sample-1", type: "lost", title: "Blue water bottle", location: "Ayala Center Cebu", date: "2026-10-12" },
-  { id: "sample-2", type: "found", title: "Keys with a green tag", location: "Fuente Osmeña Circle", date: "2026-10-11" },
-  { id: "sample-3", type: "lost", title: "Black umbrella", location: "IT Park, Cebu City", date: "2026-10-10" },
+  { id: "sample-1", type: "lost", title: "Blue water bottle", location: "Central shopping center", date: "2026-10-12" },
+  { id: "sample-2", type: "found", title: "Keys with a green tag", location: "Town square", date: "2026-10-11" },
+  { id: "sample-3", type: "lost", title: "Black umbrella", location: "Transit station", date: "2026-10-10" },
 ];
 
 let reports = defaultReports;
