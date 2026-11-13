@@ -6,15 +6,29 @@
  * scripts used by the browser.
  */
 import { createServer } from "node:http";
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AuthError, authenticateUser, registerUser } from "./src/auth.js";
-import { findUserByEmail, insertUser, openDatabase } from "./src/database.js";
+import {
+  deleteReport,
+  findReportById,
+  findReportImage,
+  findUserByEmail,
+  insertReport,
+  insertUser,
+  listReports,
+  openDatabase,
+  seedSampleReports,
+  updateReport,
+} from "./src/database.js";
 import { hashPassword } from "./src/passwords.js";
 
 const port = Number(process.env.PORT || 3000);
+const maxImageBytes = 5 * 1024 * 1024;
+const maxImageBase64Length = Math.ceil(maxImageBytes / 3) * 4;
+const maxReportRequestBytes = maxImageBase64Length + 16_384;
 const projectRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 // Accounts stay in SQLite; short-lived sign-in sessions live in server memory.
 const database = openDatabase();
@@ -30,6 +44,13 @@ const staticFiles = new Map([
   ["/assets/find-it-logo.png", ["assets/find-it-logo.png", "image/png"]],
   ["/shared/password-policy.js", ["shared/password-policy.js", "text/javascript; charset=utf-8"]],
 ]);
+
+class RequestError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
 
 /**
  * Populates the database with a couple of demo accounts when they do not exist.
@@ -75,30 +96,108 @@ function sendJson(response, statusCode, body, headers = {}) {
  * @param {import("node:http").IncomingMessage} request - HTTP request object.
  * @returns {Promise<object>} Parsed JSON body.
  */
-function readJson(request) {
+function readJson(request, maxBytes = 16_384) {
   return new Promise((resolveBody, reject) => {
-    let body = "";
+    const chunks = [];
+    let bodyLength = 0;
     let tooLarge = false;
-    request.setEncoding("utf8");
     request.on("data", (chunk) => {
       if (tooLarge) return;
-      if (Buffer.byteLength(body) + Buffer.byteLength(chunk) > 16_384) {
+      bodyLength += chunk.length;
+      if (bodyLength > maxBytes) {
         tooLarge = true;
-        reject(new AuthError("Request is too large.", 413));
+        reject(new RequestError("Request is too large.", 413));
         return;
       }
-      body += chunk;
+      chunks.push(chunk);
     });
     request.on("end", () => {
       if (tooLarge) return;
       try {
-        resolveBody(JSON.parse(body));
+        resolveBody(JSON.parse(Buffer.concat(chunks).toString("utf8")));
       } catch {
-        reject(new AuthError("Request must contain valid JSON.", 400));
+        reject(new RequestError("Request must contain valid JSON.", 400));
       }
     });
     request.on("error", reject);
   });
+}
+
+function requireSession(request, response, adminOnly = false) {
+  const session = getSession(request);
+  if (!session) {
+    sendJson(response, 401, { error: "Please log in to continue." });
+    return null;
+  }
+  if (adminOnly && session.user.role !== "admin") {
+    sendJson(response, 403, { error: "Administrator access is required." });
+    return null;
+  }
+  return session;
+}
+
+function validateReport(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    throw new RequestError("Enter the report details.", 400);
+  }
+
+  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const location = typeof body.location === "string" ? body.location.trim() : "";
+  if (!["lost", "found"].includes(body.type) || !title || title.length > 80 || !location || location.length > 100) {
+    throw new RequestError("Enter a valid type, item name, and location.", 400);
+  }
+  return { type: body.type, title, location };
+}
+
+function parseImage(image) {
+  if (image === undefined || image === null) return null;
+  if (
+    !image ||
+    typeof image !== "object" ||
+    !["image/jpeg", "image/png", "image/webp"].includes(image.mimeType) ||
+    typeof image.data !== "string" ||
+    image.data.length === 0
+  ) {
+    throw new RequestError("Choose a JPG, PNG, or WebP image.", 400);
+  }
+  if (image.data.length > maxImageBase64Length) {
+    throw new RequestError("Images must be 5 MB or smaller.", 413);
+  }
+  if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/u.test(image.data)) {
+    throw new RequestError("The uploaded image is invalid.", 400);
+  }
+
+  const data = Buffer.from(image.data, "base64");
+  if (
+    data.length === 0 ||
+    data.length > maxImageBytes ||
+    data.toString("base64") !== image.data
+  ) {
+    throw new RequestError("The uploaded image is invalid or larger than 5 MB.", 400);
+  }
+
+  const isPng = data.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  const isJpeg = data.length >= 3 && data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff;
+  const isWebp = data.length >= 12 && data.toString("ascii", 0, 4) === "RIFF" && data.toString("ascii", 8, 12) === "WEBP";
+  if (
+    (image.mimeType === "image/png" && !isPng) ||
+    (image.mimeType === "image/jpeg" && !isJpeg) ||
+    (image.mimeType === "image/webp" && !isWebp)
+  ) {
+    throw new RequestError("The image contents do not match the selected file type.", 400);
+  }
+  return { data, mimeType: image.mimeType };
+}
+
+function reportResponse(report) {
+  return {
+    id: report.id,
+    type: report.type,
+    title: report.title,
+    location: report.location,
+    date: report.date,
+    hasImage: Boolean(report.hasImage),
+  };
 }
 
 /**
@@ -218,6 +317,74 @@ async function handleRequest(request, response) {
     return;
   }
 
+  if (pathname === "/api/reports" && request.method === "GET") {
+    if (!requireSession(request, response)) return;
+    sendJson(response, 200, { reports: listReports(database).map(reportResponse) });
+    return;
+  }
+
+  if (pathname === "/api/reports" && request.method === "POST") {
+    if (!requireSession(request, response, true)) return;
+    const body = await readJson(request, maxReportRequestBytes);
+    const fields = validateReport(body);
+    const image = parseImage(body.image);
+    const report = {
+      ...fields,
+      id: randomUUID(),
+      date: new Date().toISOString().slice(0, 10),
+    };
+    insertReport(database, report, image?.data || null, image?.mimeType || null);
+    sendJson(response, 201, { report: reportResponse({ ...report, hasImage: Boolean(image) }) });
+    return;
+  }
+
+  const imageMatch = /^\/api\/reports\/([A-Za-z0-9_-]+)\/image$/u.exec(pathname);
+  if (imageMatch && request.method === "GET") {
+    if (!requireSession(request, response)) return;
+    const image = findReportImage(database, imageMatch[1]);
+    if (!image) {
+      sendJson(response, 404, { error: "Image not found." });
+      return;
+    }
+    response.writeHead(200, {
+      "Content-Type": image.mimeType,
+      "Cache-Control": "private, no-store",
+      "Content-Length": image.data.length,
+      "X-Content-Type-Options": "nosniff",
+      "Content-Disposition": "inline",
+    });
+    response.end(image.data);
+    return;
+  }
+
+  const reportMatch = /^\/api\/reports\/([A-Za-z0-9_-]+)$/u.exec(pathname);
+  if (reportMatch && request.method === "PUT") {
+    if (!requireSession(request, response, true)) return;
+    const existingReport = findReportById(database, reportMatch[1]);
+    if (!existingReport) {
+      sendJson(response, 404, { error: "Report not found." });
+      return;
+    }
+    const body = await readJson(request, maxReportRequestBytes);
+    const fields = validateReport(body);
+    const image = parseImage(body.image);
+    updateReport(database, reportMatch[1], fields, image?.data || null, image?.mimeType || null);
+    sendJson(response, 200, {
+      report: reportResponse({ ...existingReport, ...fields, hasImage: Boolean(image) || existingReport.hasImage }),
+    });
+    return;
+  }
+
+  if (reportMatch && request.method === "DELETE") {
+    if (!requireSession(request, response, true)) return;
+    if (!deleteReport(database, reportMatch[1])) {
+      sendJson(response, 404, { error: "Report not found." });
+      return;
+    }
+    sendJson(response, 200, { ok: true });
+    return;
+  }
+
   if (pathname === "/api/logout" && request.method === "POST") {
     const session = getSession(request);
     if (session) sessions.delete(session.token);
@@ -230,6 +397,7 @@ async function handleRequest(request, response) {
 }
 
 await seedDemoAccounts();
+seedSampleReports(database);
 
 const server = createServer((request, response) => {
   handleRequest(request, response).catch((error) => {
@@ -237,7 +405,7 @@ const server = createServer((request, response) => {
       response.destroy(error);
       return;
     }
-    if (error instanceof AuthError) {
+    if (error instanceof AuthError || error instanceof RequestError) {
       sendJson(response, error.statusCode, { error: error.message });
       return;
     }

@@ -45,6 +45,159 @@ function initializeDatabase(database) {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS reports (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL CHECK (type IN ('lost', 'found')),
+      title TEXT NOT NULL,
+      location TEXT NOT NULL,
+      date TEXT NOT NULL,
+      image_data BLOB,
+      image_mime TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CHECK (
+        (image_data IS NULL AND image_mime IS NULL) OR
+        (image_data IS NOT NULL AND image_mime IN ('image/jpeg', 'image/png', 'image/webp'))
+      )
+    )
+  `);
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    )
+  `);
+}
+
+/**
+ * Lists saved reports without including their image data.
+ *
+ * @param {DatabaseSync} database - The project database.
+ * @returns {object[]} Reports ordered newest first.
+ */
+export function listReports(database) {
+  return database.prepare(`
+    SELECT id, type, title, location, date, image_data IS NOT NULL AS hasImage
+    FROM reports
+    ORDER BY date DESC, rowid DESC
+  `).all();
+}
+
+/**
+ * Finds a saved report without including its image data.
+ *
+ * @param {DatabaseSync} database - The project database.
+ * @param {string} id - Report identifier.
+ * @returns {object | undefined} Matching report or undefined.
+ */
+export function findReportById(database, id) {
+  return database.prepare(`
+    SELECT id, type, title, location, date, image_data IS NOT NULL AS hasImage
+    FROM reports
+    WHERE id = ?
+  `).get(id);
+}
+
+/**
+ * Loads an image attached to a report.
+ *
+ * @param {DatabaseSync} database - The project database.
+ * @param {string} id - Report identifier.
+ * @returns {{ data: Buffer, mimeType: string } | undefined} Image or undefined.
+ */
+export function findReportImage(database, id) {
+  const image = database.prepare(
+    "SELECT image_data, image_mime FROM reports WHERE id = ? AND image_data IS NOT NULL",
+  ).get(id);
+  if (!image) return undefined;
+  return { data: Buffer.from(image.image_data), mimeType: image.image_mime };
+}
+
+/**
+ * Inserts a report.
+ *
+ * @param {DatabaseSync} database - The project database.
+ * @param {object} report - Report fields.
+ * @param {Buffer | null} [imageData=null] - Optional image data.
+ * @param {string | null} [imageMime=null] - Optional image MIME type.
+ */
+export function insertReport(database, report, imageData = null, imageMime = null) {
+  database.prepare(`
+    INSERT INTO reports (id, type, title, location, date, image_data, image_mime)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    report.id,
+    report.type,
+    report.title,
+    report.location,
+    report.date,
+    imageData,
+    imageMime,
+  );
+}
+
+/**
+ * Updates a report and optionally replaces its image.
+ *
+ * @param {DatabaseSync} database - The project database.
+ * @param {string} id - Report identifier.
+ * @param {object} report - Updated report fields.
+ * @param {Buffer | null} [imageData=null] - Replacement image data.
+ * @param {string | null} [imageMime=null] - Replacement image MIME type.
+ * @returns {number} Number of updated reports.
+ */
+export function updateReport(database, id, report, imageData = null, imageMime = null) {
+  const result = imageData
+    ? database.prepare(`
+        UPDATE reports
+        SET type = ?, title = ?, location = ?, image_data = ?, image_mime = ?
+        WHERE id = ?
+      `).run(report.type, report.title, report.location, imageData, imageMime, id)
+    : database.prepare(`
+        UPDATE reports
+        SET type = ?, title = ?, location = ?
+        WHERE id = ?
+      `).run(report.type, report.title, report.location, id);
+  return result.changes;
+}
+
+/**
+ * Deletes a report.
+ *
+ * @param {DatabaseSync} database - The project database.
+ * @param {string} id - Report identifier.
+ * @returns {number} Number of deleted reports.
+ */
+export function deleteReport(database, id) {
+  return database.prepare("DELETE FROM reports WHERE id = ?").run(id).changes;
+}
+
+/**
+ * Adds the built-in sample reports once, without restoring them after deletion.
+ *
+ * @param {DatabaseSync} database - The project database.
+ */
+export function seedSampleReports(database) {
+  if (database.prepare("SELECT 1 FROM app_settings WHERE key = ?").get("sample_reports_seeded")) return;
+
+  const sampleReports = [
+    { id: "sample-1", type: "lost", title: "Blue water bottle", location: "Central shopping center", date: "2026-10-12" },
+    { id: "sample-2", type: "found", title: "Keys with a green tag", location: "Town square", date: "2026-10-11" },
+    { id: "sample-3", type: "lost", title: "Black umbrella", location: "Transit station", date: "2026-10-10" },
+  ];
+  const reportCount = database.prepare("SELECT COUNT(*) AS count FROM reports").get().count;
+
+  database.exec("BEGIN");
+  try {
+    if (reportCount === 0) {
+      for (const report of sampleReports) insertReport(database, report);
+    }
+    database.prepare("INSERT INTO app_settings (key, value) VALUES (?, ?)").run("sample_reports_seeded", "true");
+    database.exec("COMMIT");
+  } catch (error) {
+    database.exec("ROLLBACK");
+    throw error;
+  }
 }
 
 /**

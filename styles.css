@@ -897,6 +897,21 @@ button {
   border-color: #6ca07e;
 }
 
+.item-form .image-upload-label {
+  grid-column: 1 / -1;
+}
+
+.item-form input[type="file"] {
+  height: auto;
+  padding: 8px;
+}
+
+.image-upload-label span {
+  color: #78827a;
+  font-size: 10px;
+  font-weight: 400;
+}
+
 .item-form-actions {
   display: flex;
   align-items: center;
@@ -1074,6 +1089,23 @@ button {
   font-weight: 700;
 }
 
+.report-image-link {
+  display: block;
+  width: 100%;
+  margin: 6px 0 14px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f1f4f0;
+}
+
+.report-image-link img {
+  display: block;
+  width: 100%;
+  max-height: 190px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
 .report-location {
   display: flex;
   align-items: center;
@@ -1093,12 +1125,34 @@ button {
   stroke-width: 1.5;
 }
 
-.edit-button {
-  min-height: 29px;
+.report-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: auto;
+  padding-top: 15px;
+}
+
+.edit-button,
+.delete-button {
+  min-height: 29px;
   padding: 0 10px;
+}
+
+.edit-button {
   color: var(--green);
   background: #fff;
+}
+
+.delete-button {
+  border: 1px solid #e8d4d0;
+  border-radius: 6px;
+  color: #a24437;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .edit-button:hover,
@@ -1106,6 +1160,11 @@ button {
   border-color: #b9cbbd;
   color: var(--green-dark);
   transform: translateY(-1px);
+}
+
+.delete-button:hover {
+  border-color: #d7aaa2;
+  background: #fff8f6;
 }
 
 .empty-state {
@@ -1132,7 +1191,9 @@ button {
 .home-search input:focus-visible,
 .admin-button:focus-visible,
 .cancel-button:focus-visible,
-.edit-button:focus-visible {
+.edit-button:focus-visible,
+.delete-button:focus-visible,
+.report-image-link:focus-visible {
   outline: 3px solid rgba(67, 130, 86, 0.3);
   outline-offset: 3px;
 }
