@@ -47,7 +47,7 @@
           <div>
             <p class="eyebrow"><span></span> ADMIN CONTROLS</p>
             <h2 id="admin-tools-title">Manage community items</h2>
-            <p class="home-description">Add a report or choose Edit on an item to update it.</p>
+            <p class="home-description">Add, edit, or remove reports and share an optional item photo.</p>
           </div>
           <form class="item-form" id="item-form">
             <input id="item-id" name="itemId" type="hidden" />
@@ -65,6 +65,11 @@
             <label>
               Location
               <input id="item-location" name="location" type="text" maxlength="100" placeholder="e.g. Central library" required />
+            </label>
+            <label class="image-upload-label">
+              Item photo (optional)
+              <input id="item-image" name="image" type="file" accept="image/jpeg,image/png,image/webp" />
+              <span>JPG, PNG, or WebP; up to 5 MB. Leave blank to keep the current photo.</span>
             </label>
             <div class="item-form-actions">
               <button class="admin-button" id="item-submit" type="submit">Add item</button>
@@ -85,7 +90,7 @@
 
           <div class="report-grid" id="report-grid"></div>
           <p class="empty-state" id="empty-state" hidden>No reports match that search.</p>
-          <p class="demo-feed-note" id="board-message" role="status" aria-live="polite">Sample reports for this local demo.</p>
+          <p class="demo-feed-note" id="board-message" role="status" aria-live="polite">Community reports are shared with all signed-in users.</p>
         </section>
       </main>
 
